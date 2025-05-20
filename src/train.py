@@ -94,7 +94,7 @@ def eval(model, dataset, cutoff, loss_fn, device):
 
 
 def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader, loss_fn, device, num_epochs=1, learning_rate = 0.0008, perform_rotations=False):
-    model_name = f"gnn_model_{h_dim}_{int(cutoff*1000)}_{n_layer}"
+    model_name = f"gnn_model_{h_dim}_{int(cutoff*1000)}_{n_layer}_{num_epochs}_rot{int(perform_rotations)}"
     model, optimizer, scheduler = gnn_model(h_dim, n_layer, n_atm,  learning_rate, device)
     model.to(device)
     print(f"Starting training for {model_name}...")
