@@ -27,7 +27,7 @@ def train(model, dataset, optimizer, scheduler, cutoff, loss_fn, device, perform
             edge_list[i] = torch.transpose(edge_list[i], 0, 1)
 
         edge_dash = torch.transpose(torch.cat(edge_list), 0, 1).to(device)
-        pred = model(x_dash, edge_dash)
+        pred = model(x_dash, edge_dash, False)
 
         num_cvs = pred.shape[1]  # number of CVs dynamically from output shape
         if individual_losses is None:
@@ -78,7 +78,7 @@ def eval(model, dataset, cutoff, loss_fn, device, get_embeddings=False, perform_
                 edge_list[i] = torch.transpose(edge_list[i], 0, 1)
 
             edge_dash = torch.transpose(torch.cat(edge_list), 0, 1).to(device)
-            pred = model(x_dash, edge_dash, get_embeddings=get_embeddings)
+            pred = model(x_dash, edge_dash, get_embeddings)
 
             
             y_pred.extend(pred.tolist())

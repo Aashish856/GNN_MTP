@@ -57,7 +57,7 @@ class GNN(nn.Module):
 
         self.cv_decoders = nn.ModuleList([MLP(h_dim, h_dim, 1) for _ in range(num_cvs)])
 
-    def forward(self, x, edge_index, get_embeddings=False):
+    def forward(self, x, edge_index, get_embeddings):
         h = self.embedding(x)
         for i in range(self.n_layers):
             h = self._modules[f"mpl_{i}"](h, edge_index)
