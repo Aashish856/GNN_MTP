@@ -48,6 +48,7 @@ def train(model, dataset, optimizer, scheduler, cutoff, loss_fn, device, perform
 
         total_loss += loss.item() * y.size(0)
         total_samples += y.size(0)
+        break
 
     avg_loss = total_loss / total_samples
     avg_individual_losses = [l / total_samples for l in individual_losses]
