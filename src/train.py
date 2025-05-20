@@ -94,11 +94,13 @@ def eval(model, dataset, cutoff, loss_fn, device):
     return avg_loss, avg_individual_losses
 
 
-def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader, loss_fn, device, num_epochs=1, learning_rate = 0.0008, perform_rotations=False):
+def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader, loss_fn, device, num_epochs=1, learning_rate=0.0008, perform_rotations=False):
     model_name = f"gnn_model_{h_dim}_{int(cutoff*1000)}_{n_layer}_{num_epochs}_rot{int(perform_rotations)}"
-    model, optimizer, scheduler = gnn_model(h_dim, n_layer, n_atm,  learning_rate, device)
+    model, optimizer, scheduler = gnn_model(h_dim, n_layer, n_atm, learning_rate, device)
     model.to(device)
+
     print(f"Starting training for {model_name}...")
+
     for epoch in range(num_epochs):
         print(f"Epoch {epoch+1}/{num_epochs}")
         train_loss, train_individual_loss = train(model, train_dataloader, optimizer, scheduler, cutoff, loss_fn, device, perform_rotations)
@@ -118,8 +120,12 @@ def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader
     results_dir = os.path.join(BASE_DIR, "results")
     os.makedirs(results_dir, exist_ok=True)
 
-    # Save model there
+    # Save model
     model_path = os.path.join(results_dir, f"{model_name}.pth")
     torch.save(model.state_dict(), model_path)
 
     print(f"Finished training for {model_name}.\n")
+
+    # Free GPU memory
+    del model, optimizer, scheduler
+    torch.cuda.empty_cache()
