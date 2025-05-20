@@ -20,8 +20,8 @@ def normalize_coordinates(coords: np.ndarray):
     coords_centered = coords - means
     min_coords = np.min(coords_centered, axis=(0,1), keepdims=True)
     max_coords = np.max(coords_centered, axis=(0,1), keepdims=True)
-    scale_factor = max_coords[0, 0, 0] - min_coords[0, 0, 1]
-    normalized_coords = 2 * coords_centered / scale_factor
+    scale_factor = np.std(coords_centered)
+    normalized_coords = coords_centered / scale_factor
 
     return normalized_coords
 
