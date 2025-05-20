@@ -78,7 +78,7 @@ def eval(model, dataset, cutoff, loss_fn, device, get_embeddings=False, perform_
                 edge_list[i] = torch.transpose(edge_list[i], 0, 1)
 
             edge_dash = torch.transpose(torch.cat(edge_list), 0, 1).to(device)
-            pred = model(x_dash, edge_dash, get_embeddings)
+            pred = model(x_dash, edge_dash, get_embeddings=get_embeddings)
 
             
             y_pred.extend(pred.tolist())
@@ -153,7 +153,7 @@ def run_evaluation(model_file, dataloader, h_dim, cutoff, n_layer, n_atm, loss_f
     model.to(device)
 
     if(get_embeddings):
-        y_actual, y_pred = eval(model, dataloader, cutoff, loss_fn, device, get_embeddings, perform_rotations)
+        y_actual, y_pred = eval(model = model, dataset = dataloader, cutoff=cutoff, loss_fn=loss_fn,device= device, get_embeddings=get_embeddings, perform_rotations=perform_rotations)
         return y_actual, y_pred
 
     val_loss, val_individual_loss, y_actual, y_pred = eval(model, dataloader, cutoff, loss_fn, device, get_embeddings, perform_rotations)
