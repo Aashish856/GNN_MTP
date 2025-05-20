@@ -57,7 +57,7 @@ class GNN(nn.Module):
 
         self.cv_decoders = nn.ModuleList([MLP(h_dim, h_dim, 1) for _ in range(num_cvs)])
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, get_embeddings=False):
         h = self.embedding(x)
         for i in range(self.n_layers):
             h = self._modules[f"mpl_{i}"](h, edge_index)
@@ -65,7 +65,8 @@ class GNN(nn.Module):
         h = self.node_decoding(h)
         h = h.view(-1, self.n_atm, self.h_dim)
         h = torch.mean(h, dim=1)
-
+        if(get_embeddings):
+            return h
         outputs = [decoder(h) for decoder in self.cv_decoders]
         return torch.cat(outputs, dim=1)
 

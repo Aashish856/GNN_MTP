@@ -54,15 +54,18 @@ def train(model, dataset, optimizer, scheduler, cutoff, loss_fn, device, perform
     return avg_loss, avg_individual_losses
 
 
-def eval(model, dataset, cutoff, loss_fn, device):
+def eval(model, dataset, cutoff, loss_fn, device, get_embeddings=False, perform_rotations=False):
     model.eval()
     total_loss = 0
     total_samples = 0
     individual_losses = None
+    y_pred, y_actual = [], []
 
     with torch.no_grad():
         for x, y in tqdm(dataset):
             x, y = x.to(device), y.to(device)
+            if(perform_rotations):
+                x = randomRotate(x)
             y = y.squeeze()
 
             adjacency_matrix = ((pairwise_distances(x) < cutoff).float() - torch.eye(x.shape[1]).to(device))
@@ -77,6 +80,12 @@ def eval(model, dataset, cutoff, loss_fn, device):
             edge_dash = torch.transpose(torch.cat(edge_list), 0, 1).to(device)
             pred = model(x_dash, edge_dash)
 
+            
+            y_pred.extend(pred.tolist())
+            y_actual.extend(y.tolist())
+
+            if(get_embeddings): 
+                continue   
             num_cvs = pred.shape[1]
             if individual_losses is None:
                 individual_losses = [0] * num_cvs
@@ -89,9 +98,12 @@ def eval(model, dataset, cutoff, loss_fn, device):
             total_loss += loss.item() * y.size(0)
             total_samples += y.size(0)
 
+    if get_embeddings:
+        return y_actual, y_pred
+
     avg_loss = total_loss / total_samples
     avg_individual_losses = [l / total_samples for l in individual_losses]
-    return avg_loss, avg_individual_losses
+    return avg_loss, avg_individual_losses, y_actual, y_pred
 
 
 def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader, loss_fn, device, num_epochs=1, learning_rate=0.0008, perform_rotations=False):
@@ -129,3 +141,27 @@ def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader
     # Free GPU memory
     del model, optimizer, scheduler
     torch.cuda.empty_cache()
+
+def run_evaluation(model_file, dataloader, h_dim, cutoff, n_layer, n_atm, loss_fn,  device, get_embeddings = False, perform_rotations = False):
+    print(f"Loading model from {model_file}...")
+    if not os.path.exists(model_file):
+        raise FileNotFoundError(f"Model file {model_file} does not exist.") 
+
+    model_name = os.path.splitext(os.path.basename(model_file))[0]
+    model, _, _ = gnn_model(h_dim, n_layer, n_atm, 0.0008, device)
+    model.load_state_dict(torch.load(model_file))
+    model.to(device)
+
+    if(get_embeddings):
+        y_actual, y_pred = eval(model, dataloader, cutoff, loss_fn, device, get_embeddings, perform_rotations)
+        return y_actual, y_pred
+
+    val_loss, val_individual_loss, y_actual, y_pred = eval(model, dataloader, cutoff, loss_fn, device, get_embeddings, perform_rotations)
+
+    print(f"Validation loss for {model_name}: {val_loss:.6f}")
+    print("Validation individual losses:", val_individual_loss)
+    
+    del model
+    torch.cuda.empty_cache()
+
+    return val_loss, val_individual_loss, y_actual, y_pred
