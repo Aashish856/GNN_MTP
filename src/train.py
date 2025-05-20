@@ -1,5 +1,6 @@
 import torch
 from tqdm import tqdm
+import os
 from .utils.rotations import randomRotate
 from .utils.helper import pairwise_distances
 from .models.gnn import gnn_model
@@ -87,6 +88,7 @@ def eval(model, dataset, cutoff, loss_fn, device):
             loss = loss_fn(pred, y)
             total_loss += loss.item() * y.size(0)
             total_samples += y.size(0)
+            break
 
     avg_loss = total_loss / total_samples
     avg_individual_losses = [l / total_samples for l in individual_losses]
@@ -108,7 +110,17 @@ def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader
     print(f"Validation loss: {val_loss:.6f}")
     print("Validation individual losses:", val_individual_loss)
 
-    # Save the final model state_dict after training
-    torch.save(model.state_dict(), f"./results/{model_name}.pth")
+    try:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    except NameError:
+        import os
+        BASE_DIR = os.getcwd()
+
+    results_dir = os.path.join(BASE_DIR, "results")
+    os.makedirs(results_dir, exist_ok=True)
+
+    # Save model there
+    model_path = os.path.join(results_dir, f"{model_name}.pth")
+    torch.save(model.state_dict(), model_path)
 
     print(f"Finished training for {model_name}.\n")
