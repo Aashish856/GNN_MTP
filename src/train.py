@@ -1,8 +1,8 @@
 import torch
 from tqdm import tqdm
-from src.utils.rotations import randomRotate
-from src.utils.helper import pairwise_distances
-from src.models.gnn import gnn_model
+from .utils.rotations import randomRotate
+from .utils.helper import pairwise_distances
+from .models.gnn import gnn_model
 
 def train(model, dataset, optimizer, scheduler, cutoff, loss_fn, device, perform_rotations=False):
     model.train()

@@ -1,7 +1,7 @@
 # src/data/dataset.py
 import pickle
 import numpy as np
-from src.utils.helper import normalize_coordinates
+from ..utils.helper import normalize_coordinates
 
 class CVDataset:
     """
