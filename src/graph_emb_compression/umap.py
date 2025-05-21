@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import umap
 from sklearn.manifold import trustworthiness
 
-def umap_compression_analysis(embeddings, target_dim. n_neighbors=100, min_dist=0.1):
+def umap_compression_analysis(embeddings, target_dim, n_neighbors=100, min_dist=0.1):
     """
     Perform UMAP compression to target_dim and plot trustworthiness for dimensions 2 to 10.
 
