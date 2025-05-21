@@ -120,7 +120,7 @@ def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader
         print(f"Train loss: {train_loss:.6f}")
         print("Train individual losses:", train_individual_loss)
 
-    val_loss, val_individual_loss = eval(model, val_dataloader, cutoff, loss_fn, device)
+    val_loss, val_individual_loss, _, _ = eval(model, val_dataloader, cutoff, loss_fn, device)
     print(f"Validation loss: {val_loss:.6f}")
     print("Validation individual losses:", val_individual_loss)
 
