@@ -18,7 +18,7 @@ def tsne_compression(embeddings, compressed_dim=2, perplexity=100, learning_rate
     """
 
     tsne = TSNE(
-        n_components=compressed_dim.
+        n_components=compressed_dim,
         perplexity=perplexity,
         learning_rate=learning_rate,
         n_iter=n_iter,
