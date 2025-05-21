@@ -1,5 +1,6 @@
 import torch
 from tqdm import tqdm
+import numpy as np
 import os
 from .utils.rotations import randomRotate
 from .utils.helper import pairwise_distances
@@ -99,11 +100,11 @@ def eval(model, dataset, cutoff, loss_fn, device, get_embeddings=False, perform_
             total_samples += y.size(0)
 
     if get_embeddings:
-        return y_actual, y_pred
+        return np.array(y_actual), np.array(y_pred)
 
     avg_loss = total_loss / total_samples
     avg_individual_losses = [l / total_samples for l in individual_losses]
-    return avg_loss, avg_individual_losses, y_actual, y_pred
+    return avg_loss, avg_individual_losses, np.array(y_actual), np.array(y_pred)
 
 
 def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader, loss_fn, device, num_epochs=1, learning_rate=0.0008, perform_rotations=False):
