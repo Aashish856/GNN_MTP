@@ -22,8 +22,8 @@ def tsne_compression(embeddings, compressed_dim=2, perplexity=100, learning_rate
         perplexity=perplexity,
         learning_rate=learning_rate,
         n_iter=n_iter,
-        random_state=42
-        init='random',
+        random_state=42,
+        init='random'
         verbose=1
     )
 
