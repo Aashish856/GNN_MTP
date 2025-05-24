@@ -25,6 +25,27 @@ def normalize_coordinates(coords: np.ndarray):
 
     return normalized_coords
 
+def normalized_embeddings(embeddings, mean=None, std=None):
+    """
+    Normalize the embeddings by mean-centering and scaling.
+
+    Args:
+        embeddings (np.ndarray): Embedding matrix of shape (N_samples, N_features)
+        mean (float): Mean value for centering (optional)
+        std (float): Standard deviation for scaling (optional)
+
+    Returns:
+        normalized_embeddings (np.ndarray): Normalized embeddings
+    """
+    if mean is None:
+        mean = np.mean(embeddings, axis=0)
+    if std is None:
+        std = np.std(embeddings, axis=0)
+
+    normalized_embeddings = (embeddings - mean) / std
+
+    return normalized_embeddings
+
 def unsorted_segment_sum(data: torch.Tensor, segment_ids: torch.Tensor, num_segments: int) -> torch.Tensor:
     result_shape = (num_segments, data.size(1))
     result = data.new_full(result_shape, 0)  # Init empty result tensor.

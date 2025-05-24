@@ -1,18 +1,3 @@
-def normalization(embeddings):
-    """
-    Normalize the embeddings to have zero mean and unit variance.
-
-    Args:
-        embeddings (np.ndarray): Embedding matrix of shape (num_samples, embedding_dim)
-
-    Returns:
-        np.ndarray: Normalized embeddings
-    """
-    mean = np.mean(embeddings, axis=0)
-    std = np.std(embeddings, axis=0)
-    normalized_embeddings = (embeddings - mean) / std
-    return normalized_embeddings, mean, std
-
 class ANN(nn.Module):
     def __init__(self, embedding_dim=32, num_cvs=4):
         super(ANN, self).__init__()
@@ -25,3 +10,10 @@ class ANN(nn.Module):
         )
     def forward(self, x):
         return self.model(x)
+
+
+def ann_model(emb_dim, num_cvs, device, starting_learning_rate=0.001):
+  model = ANN(embedding_dim=emb_dim, num_cvs=num_cvs).to(device)  
+  optimizer = optim.Adam(model.parameters(), lr=starting_learning_rate)
+  scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.99999924)
+  return model, optimizer, scheduler        

@@ -5,6 +5,7 @@ import os
 from .utils.rotations import randomRotate
 from .utils.helper import pairwise_distances
 from .models.gnn import gnn_model
+from .models.ann import ann_model
 
 def train(model, dataset, optimizer, scheduler, cutoff, loss_fn, device, perform_rotations=False):
     model.train()
@@ -166,3 +167,46 @@ def run_evaluation(model_file, dataloader, h_dim, cutoff, n_layer, n_atm, loss_f
     torch.cuda.empty_cache()
 
     return val_loss, val_individual_loss, y_actual, y_pred
+
+
+ def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, device, num_epochs = 1000):
+    model_name = f"ann_model_{emb_dim}_{num_cvs}_{num_epochs}"
+    model, optimizer, scheduler = ann_model(emb_dim, num_cvs, device, learning_rate)
+    model.to(device)
+    print(f"Starting training for {model_name}...")
+    for epoch in range(num_epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X_train_tensor)
+        loss = criterion(outputs, y_train_tensor)
+        loss.backward()
+        scheduler.step()
+        optimizer.step()
+    # Print loss every 20 epochs
+    if (epoch+1) % 50 == 0:
+        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+
+
+def eval_ann(model_file, X_val_tensor, y_val_tensor, device):
+    print(f"Loading ANN model from {model_file}...")
+    if not os.path.exists(model_file):
+        raise FileNotFoundError(f"Model file {model_file} does not exist.") 
+
+    model_name = os.path.splitext(os.path.basename(model_file))[0]
+    model, _, _ = ann_model(emb_dim=32, num_cvs=4, device=device)
+    model.load_state_dict(torch.load(model_file))
+    model.to(device)
+
+    model.eval()
+    with torch.no_grad():
+        outputs = model(X_val_tensor)
+        loss = criterion(outputs, y_val_tensor)
+
+    print(f"Validation loss for {model_name}: {loss.item():.6f}")
+    
+    del model
+    torch.cuda.empty_cache()
+
+    return loss.item(), outputs.cpu().numpy(), y_val_tensor.cpu().numpy()
+
+
