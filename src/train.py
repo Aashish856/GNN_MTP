@@ -169,7 +169,7 @@ def run_evaluation(model_file, dataloader, h_dim, cutoff, n_layer, n_atm, loss_f
     return val_loss, val_individual_loss, y_actual, y_pred
 
 
- def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, device, num_epochs = 1000):
+def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, device, num_epochs = 1000):
     model_name = f"ann_model_{emb_dim}_{num_cvs}_{num_epochs}"
     model, optimizer, scheduler = ann_model(emb_dim, num_cvs, device, learning_rate)
     model.to(device)
