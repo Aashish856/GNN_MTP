@@ -8,7 +8,9 @@ rcParams['font.size'] = 14
 
 # Colors
 PRIMARY_COLOR = '#0000ff'  # Blue
+PRIMARY_COLOR_LIGHT = '#add8e6'  # Light blue
 SECONDARY_COLOR = '#ff7f0e'  # Optional accent
+
 
 # Axes settings
 rcParams['axes.titlesize'] = 16
@@ -37,7 +39,7 @@ rcParams['lines.linewidth'] = 2
 rcParams['lines.markersize'] = 6
 
 # Grid settings
-rcParams['axes.grid'] = True
+rcParams['axes.grid'] = False
 rcParams['grid.linestyle'] = '--'
 rcParams['grid.alpha'] = 0.7
 
