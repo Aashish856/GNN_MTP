@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import plot_config  # assuming your config file is named plot_config.py
+import sys
+sys.path.append(os.path.dirname(__file__))
+import plot_config
 
 def prediction_plot(x, y, x_labels, y_labels, common_title):
     """
