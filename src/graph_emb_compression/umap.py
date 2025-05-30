@@ -16,7 +16,7 @@ def umap_compression_analysis(embeddings, target_dim, n_neighbors=100, min_dist=
     """
 
     trust_scores = []
-    dims = list(range(2, 11))
+    dims = list(range(1, 11))
 
     for dim in dims:
         reducer = umap.UMAP(n_components=dim, n_neighbors = n_neighbors, min_dist = min_dist,  random_state=42)
@@ -37,4 +37,4 @@ def umap_compression_analysis(embeddings, target_dim, n_neighbors=100, min_dist=
     reducer = umap.UMAP(n_components=target_dim, n_neighbors = n_neighbors, min_dist = min_dist, random_state=42)
     compressed_embeddings = reducer.fit_transform(embeddings)
 
-    return compressed_embeddings
+    return np.array(trust_scores), compressed_embeddings
