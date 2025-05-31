@@ -21,7 +21,7 @@ def umap_compression_analysis(embeddings, target_dim):
     for dim in dims:
         reducer = umap.UMAP(n_components=dim,  random_state=42)
         embedding_dim = reducer.fit_transform(embeddings)
-        score = trustworthiness(embeddings, embedding_dim, n_neighbors=n_neighbors)
+        score = trustworthiness(embeddings, embedding_dim)
         trust_scores.append(score)
 
     # Plot trustworthiness vs. dimension

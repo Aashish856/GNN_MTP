@@ -169,7 +169,7 @@ def run_evaluation(model_file, dataloader, h_dim, cutoff, n_layer, n_atm, loss_f
     return val_loss, val_individual_loss, y_actual, y_pred
 
 
-def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, device, num_epochs = 1000):
+def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, device, loss_fn, num_epochs = 1000):
     model_name = f"ann_model_{emb_dim}_{num_cvs}_{num_epochs}"
     model, optimizer, scheduler = ann_model(emb_dim, num_cvs, device, learning_rate)
     model.to(device)
@@ -178,7 +178,7 @@ def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, d
         model.train()
         optimizer.zero_grad()
         outputs = model(X_train_tensor)
-        loss = criterion(outputs, y_train_tensor)
+        loss = loss_fn(outputs, y_train_tensor)
         loss.backward()
         scheduler.step()
         optimizer.step()
@@ -187,7 +187,7 @@ def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, d
         print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
 
-def eval_ann(model_file, X_val_tensor, y_val_tensor, device):
+def eval_ann(model_file, X_val_tensor, y_val_tensor, device, loss_fn):
     print(f"Loading ANN model from {model_file}...")
     if not os.path.exists(model_file):
         raise FileNotFoundError(f"Model file {model_file} does not exist.") 
@@ -200,7 +200,7 @@ def eval_ann(model_file, X_val_tensor, y_val_tensor, device):
     model.eval()
     with torch.no_grad():
         outputs = model(X_val_tensor)
-        loss = criterion(outputs, y_val_tensor)
+        loss = loss_fn(outputs, y_val_tensor)
 
     print(f"Validation loss for {model_name}: {loss.item():.6f}")
     

@@ -21,4 +21,4 @@ def ann_model(emb_dim, num_cvs, device, starting_learning_rate=0.001):
     model = ANN(embedding_dim=emb_dim, num_cvs=num_cvs).to(device)  
     optimizer = optim.Adam(model.parameters(), lr=starting_learning_rate)
     scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.99999924)
-    return model, optimizer, scheduler        
+    return model, optimizer, scheduler
