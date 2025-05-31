@@ -180,7 +180,7 @@ def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, d
         outputs = model(X_train_tensor)
         loss = loss_fn(outputs, y_train_tensor)
         loss.backward()
-        scheduler.step()
+        # scheduler.step()
         optimizer.step()
     # Print loss every 20 epochs
         if (epoch+1) % 200 == 0:
