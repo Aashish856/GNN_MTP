@@ -183,8 +183,8 @@ def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, d
         scheduler.step()
         optimizer.step()
     # Print loss every 20 epochs
-    if (epoch+1) % 50 == 0:
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+        if (epoch+1) % 200 == 0:
+            print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
 
 def eval_ann(model_file, X_val_tensor, y_val_tensor, device, loss_fn):
