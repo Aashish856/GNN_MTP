@@ -108,9 +108,9 @@ def eval(model, dataset, cutoff, loss_fn, device, get_embeddings=False, perform_
     return avg_loss, avg_individual_losses, np.array(y_actual), np.array(y_pred)
 
 
-def run_training(h_dim, cutoff, n_layer, n_atm, c_dim, train_dataloader, val_dataloader, loss_fn, device, num_epochs=1, learning_rate=0.0008, perform_rotations=False):
+def run_training(h_dim, cutoff, n_layer, n_atm, train_dataloader, val_dataloader, loss_fn, device, num_epochs=1, learning_rate=0.0008, perform_rotations=False):
     model_name = f"gnn_model_{h_dim}_{int(cutoff*1000)}_{n_layer}_{num_epochs}_rot{int(perform_rotations)}"
-    model, optimizer, scheduler = gnn_model(h_dim, n_layer, n_atm, c_dim, learning_rate, device)
+    model, optimizer, scheduler = gnn_model(h_dim, n_layer, n_atm, learning_rate, device)
     model.to(device)
 
     print(f"Starting training for {model_name}...")
@@ -144,13 +144,13 @@ def run_training(h_dim, cutoff, n_layer, n_atm, c_dim, train_dataloader, val_dat
     del model, optimizer, scheduler
     torch.cuda.empty_cache()
 
-def run_evaluation(model_file, dataloader, h_dim, cutoff, n_layer, n_atm, c_dim, loss_fn,  device, get_embeddings = False, perform_rotations = False):
+def run_evaluation(model_file, dataloader, h_dim, cutoff, n_layer, n_atm, loss_fn,  device, get_embeddings = False, perform_rotations = False):
     print(f"Loading model from {model_file}...")
     if not os.path.exists(model_file):
         raise FileNotFoundError(f"Model file {model_file} does not exist.") 
 
     model_name = os.path.splitext(os.path.basename(model_file))[0]
-    model, _, _ = gnn_model(h_dim, n_layer, n_atm, c_dim, 0.0008, device)
+    model, _, _ = gnn_model(h_dim, n_layer, n_atm, 0.0008, device)
     model.load_state_dict(torch.load(model_file))
     model.to(device)
 
