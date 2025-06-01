@@ -41,21 +41,22 @@ class MessageParsingLayer(nn.Module):
         return self.agg_mlp(agg)
 
 class GNN(nn.Module):
-    def __init__(self, n_layers, h_dim, n_atm, num_cvs=4):
+    def __init__(self, n_layers, h_dim, n_atm, c_dim, num_cvs=4):
         super(GNN, self).__init__()
         self.n_layers = n_layers
         self.n_atm = n_atm
         self.h_dim = h_dim
         self.num_cvs = num_cvs
+        self.c_dim = c_dim
 
         self.embedding = nn.Linear(3, h_dim)
 
         for i in range(n_layers):
             self.add_module(f"mpl_{i}", MessageParsingLayer(h_dim))
 
-        self.node_decoding = MLP(h_dim, h_dim, h_dim)
+        self.node_decoding = MLP(h_dim, h_dim, c_dim)
 
-        self.cv_decoders = nn.ModuleList([MLP(h_dim, h_dim, 1) for _ in range(num_cvs)])
+        self.cv_decoders = nn.ModuleList([MLP(c_dim, h_dim, 1) for _ in range(num_cvs)])
 
     def forward(self, x, edge_index, get_embeddings):
         h = self.embedding(x)
@@ -63,15 +64,15 @@ class GNN(nn.Module):
             h = self._modules[f"mpl_{i}"](h, edge_index)
 
         h = self.node_decoding(h)
-        h = h.view(-1, self.n_atm, self.h_dim)
+        h = h.view(-1, self.n_atm, self.c_dim)
         h = torch.mean(h, dim=1)
         if(get_embeddings):
             return h
         outputs = [decoder(h) for decoder in self.cv_decoders]
         return torch.cat(outputs, dim=1)
 
-def gnn_model(h_dim, n_layers, n_atm, starting_learning_rate, device):
-  model = GNN(h_dim=h_dim, n_layers=n_layers, n_atm = n_atm).to(device)
+def gnn_model(h_dim, n_layers, n_atm, c_dim, starting_learning_rate, device):
+  model = GNN(h_dim=h_dim, n_layers=n_layers, n_atm = n_atm, c_dim = c_dim).to(device)
   optimizer = optim.Adam(model.parameters(), lr=starting_learning_rate)
   scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.999924)
   return model, optimizer, scheduler        
