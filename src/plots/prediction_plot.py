@@ -52,13 +52,10 @@ def prediction_plot(x, y, x_labels, y_labels, common_title):
         # Remove gridlines
         ax.grid(False)
 
-    # Common title
     fig.suptitle(common_title, fontsize=16)
 
-    # Adjust layout
     plt.tight_layout(rect=[0, 0, 1, 0.95])
 
-    # Save and close
     plt.savefig(save_path, dpi=300)
     plt.close()
     print(f"Plot saved to {save_path}")

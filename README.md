@@ -1,6 +1,7 @@
 # Mapping Conformational Transitions of a Lipid Bilayer on a Graph Neural Network
 
-![GNN Architecture](./images/GNN%20Architecture.png)
+![GNN Architecture](./images/gnn_arc.png)
+
 
 This repository contains the code, models, data source links and data processing pipelines for the project **"Mapping Conformational Transitions of a Lipid Bilayer on a Graph Neural Network"**. In this work, we propose a graph-based deep learning framework to predict key collective variables (CVs) describing pore formation and closure in coarse-grained lipid bilayer systems, directly from atomic-scale molecular dynamics simulations.
 

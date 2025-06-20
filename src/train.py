@@ -206,13 +206,13 @@ def train_ann(X_train_tensor, y_train_tensor, emb_dim, num_cvs, learning_rate, d
     torch.cuda.empty_cache()
 
 
-def eval_ann(model_file, X_val_tensor, y_val_tensor, device, loss_fn):
+def eval_ann(model_file, X_val_tensor, y_val_tensor, emb_dim, num_cvs, device, loss_fn):
     print(f"Loading ANN model from {model_file}...")
     if not os.path.exists(model_file):
         raise FileNotFoundError(f"Model file {model_file} does not exist.") 
 
     model_name = os.path.splitext(os.path.basename(model_file))[0]
-    model, _, _ = ann_model(emb_dim=32, num_cvs=4, device=device)
+    model, _, _ = ann_model(emb_dim=emb_dim, num_cvs=num_cvs, device=device)
     model.load_state_dict(torch.load(model_file))
     model.to(device)
 
